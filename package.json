@@ -1,0 +1,11 @@
+{
+  "name": "portfolio-root",
+  "version": "1.0.0",
+  "description": "Root package for deployment",
+  "scripts": {
+    "install-backend": "cd backend && npm install",
+    "start": "node backend/server.js",
+    "build": "npm run install-backend"
+  },
+  "dependencies": {}
+}
