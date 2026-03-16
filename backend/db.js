@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/portfolio';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://babuprakash514781_db_user:<spanishclass>@portfolio.uh8jzxb.mongodb.net/?appName=portfolio';
 
 mongoose.connect(MONGODB_URI)
     .then(() => {
