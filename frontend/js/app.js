@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Fetch Blog Posts
-    fetch('/api/posts')
+    fetch('https://portfolio-1-fyic.onrender.com/api/posts')
         .then(res => res.json())
         .then(data => {
             const blogGrid = document.getElementById('blog-posts');
@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const email = document.getElementById('email').value;
         const message = document.getElementById('message').value;
 
-        fetch('/api/contact', {
+        fetch('https://portfolio-1-fyic.onrender.com/contact', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name, email, message })
