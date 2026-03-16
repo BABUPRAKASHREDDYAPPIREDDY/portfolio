@@ -1,8 +1,9 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const path = require('path');
-const db = require('./db');
+const { Post, Message } = require('./db');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -17,58 +18,51 @@ app.use(express.static(path.join(__dirname, '../frontend')));
 // API Routes
 
 // Get all blog posts
-app.get('/api/posts', (req, res) => {
-    const sql = "SELECT * FROM posts ORDER BY created_at DESC";
-    db.all(sql, [], (err, rows) => {
-        if (err) {
-            res.status(400).json({"error": err.message});
-            return;
-        }
+app.get('/api/posts', async (req, res) => {
+    try {
+        const posts = await Post.find().sort({ created_at: -1 });
         res.json({
             "message": "success",
-            "data": rows
+            "data": posts
         });
-    });
+    } catch (err) {
+        res.status(400).json({"error": err.message});
+    }
 });
 
 // Add a new blog post
-app.post('/api/posts', (req, res) => {
+app.post('/api/posts', async (req, res) => {
     const { title, content } = req.body;
     if (!title || !content) {
         return res.status(400).json({"error": "Title and content are required"});
     }
-    const sql = 'INSERT INTO posts (title, content) VALUES (?, ?)';
-    const params = [title, content];
-    db.run(sql, params, function (err) {
-        if (err) {
-            res.status(400).json({"error": err.message});
-            return;
-        }
+    try {
+        const newPost = new Post({ title, content });
+        await newPost.save();
         res.json({
             "message": "success",
-            "data": { id: this.lastID, title, content }
+            "data": newPost
         });
-    });
+    } catch (err) {
+        res.status(400).json({"error": err.message});
+    }
 });
 
 // Submit contact form message
-app.post('/api/contact', (req, res) => {
+app.post('/api/contact', async (req, res) => {
     const { name, email, message } = req.body;
     if (!name || !email || !message) {
         return res.status(400).json({"error": "Name, email, and message are required"});
     }
-    const sql = 'INSERT INTO messages (name, email, message) VALUES (?, ?, ?)';
-    const params = [name, email, message];
-    db.run(sql, params, function (err) {
-        if (err) {
-            res.status(400).json({"error": err.message});
-            return;
-        }
+    try {
+        const newMessage = await Message.create({ name, email, message });
         res.json({
             "message": "success",
-            "data": { id: this.lastID, name, email, message }
+            "data": newMessage
         });
-    });
+    } catch (err) {
+        res.status(400).json({"error": err.message});
+    }
 });
 
 // Fallback to index.html for single page app routing if needed
